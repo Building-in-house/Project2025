@@ -1,0 +1,19 @@
+description: This module implements an 8-bit up counter with enable and synchronous
+    reset.
+inputs:
+-   description: Enable signal for the counter.
+    name: enable
+    width: '1'
+-   description: Synchronous reset signal. When asserted, the counter resets to zero
+        on the next clock cycle.
+    name: reset
+    width: '1'
+module_name: up_counter
+outputs:
+-   description: 8-bit counter output.
+    name: count
+    width: '8'
+parameters:
+-   description: N/A
+    name: N/A
+    value: N/A
