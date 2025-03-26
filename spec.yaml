@@ -1,19 +1,32 @@
-description: This module implements an 8-bit up counter with enable and synchronous
-    reset.
-inputs:
--   description: Enable signal for the counter.
-    name: enable
-    width: '1'
--   description: Synchronous reset signal. When asserted, the counter resets to zero
-        on the next clock cycle.
-    name: reset
-    width: '1'
-module_name: up_counter
-outputs:
--   description: 8-bit counter output.
-    name: count
-    width: '8'
-parameters:
--   description: N/A
-    name: N/A
-    value: N/A
+rtl_project:
+    module_functions:
+    -   inputs:
+        -   description: First 8-bit input operand.
+            net_name: operand_a
+            width: 8
+        -   description: Second 8-bit input operand.
+            net_name: operand_b
+            width: 8
+        -   description: 'Operation select: 0 for addition, 1 for subtraction'
+            net_name: op_select
+            width: 1
+        module_description: An 8-bit calculator capable of performing addition and
+            subtraction.
+        module_name: calculator_8bit
+        outputs:
+        -   description: 8-bit result of the addition or subtraction.
+            name: result
+            width: 8
+        -   description: Carry-out bit (for addition or subtraction).
+            name: carry_out
+            width: 1
+        -   description: Overflow bit (for signed arithmetic).
+            name: overflow
+            width: 1
+        parameters: []
+    module_list:
+        calculator_8bit: calculator_8bit.v
+    project_description: This project implements an 8-bit calculator that can perform
+        addition and subtraction operations on two 8-bit input operands. The operation
+        is selected using a 1-bit input.
+    top_module: calculator_8bit

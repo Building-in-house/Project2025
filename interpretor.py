@@ -1,14 +1,10 @@
-
-
-# Set up the Gemini API key
-
-
 import google.generativeai as genai
 import os
 import yaml
 from dotenv import load_dotenv
 
 load_dotenv('project.env')
+
 def generate_spec_from_files(requirements_file: str, template_file: str) -> dict:
     """Generates a project specification from a requirements file and a YAML template.
 
@@ -23,7 +19,6 @@ def generate_spec_from_files(requirements_file: str, template_file: str) -> dict
     genai.configure(api_key=os.environ.get('GEMINI_API_KEY'))
     model = genai.GenerativeModel('gemini-2.0-flash')
 
-    # 1. Load Requirements
     try:
         with open(requirements_file, 'r') as f:
             project_requirements = f.read()
@@ -34,11 +29,9 @@ def generate_spec_from_files(requirements_file: str, template_file: str) -> dict
         print(f"Error reading requirements file: {e}")
         return None
 
-    # 2. Load Template and Convert to String Representation
     try:
         with open(template_file, 'r') as f:
             template_dict = yaml.safe_load(f)
-            # Convert the template to a string *with placeholders*
             template_string = yaml.dump(template_dict)
     except FileNotFoundError:
         print(f"Error: Template file not found: {template_file}")
@@ -50,9 +43,6 @@ def generate_spec_from_files(requirements_file: str, template_file: str) -> dict
         print(f"Error reading template file: {e}")
         return None
 
-
-    # 3. Construct the Prompt
-    
     prompt = f"""
     You are a rtl design engineer.  I will provide project requirements and a YAML template 
     for a project specification. Your task is to fill in the YAML template based on 
@@ -64,21 +54,19 @@ def generate_spec_from_files(requirements_file: str, template_file: str) -> dict
     ```
 
     YAML Template:
-    ```yaml
     {template_string}
-    ```
+
 
     Instructions:
     - Carefully analyze the project requirements.
     - Do not include any markdown formatting, especially backticks (`) or triple backticks (```).  Output pure YAML only.
-    - Fill in *all* placeholders in the YAML template with appropriate values derived 
-      from the requirements.
-    - Maintain the YAML structure exactly as provided in the template.  Do *not* add 
-      or remove any fields. Only fill in the existing placeholders.
+    - Maintain the YAML structure exactly as provided in the template. Do *not* remove any fields.
+    - Fill in the fields in the template in the order provided in the template file.
+    - Fill in *all* placeholders in the YAML template with appropriate values derived from the requirements.
+    - If a placeholder cannot be determined from the given requirements, use your rtl design engineering knowledge to fill the placeholders and also add necessary fields based on the requirements. 
+    - if a placeholder is not applicable, remove it.
     - Use appropriate data types (e.g., strings, lists, dictionaries) as indicated by the template.
     - Ensure placeholders are filled with detailed and meaningful information. 
-  If a placeholder cannot be determined from the given requirements, use "N/A" 
-  or an empty list/dictionary as appropriate. Do *not* leave placeholders blank.
     - Be as detailed as possible in your descriptions.
 
     Filled-in YAML Specification:
@@ -100,20 +88,20 @@ def generate_spec_from_files(requirements_file: str, template_file: str) -> dict
         
         # --- Validation (Crucial!) ---
         if not isinstance(filled_spec, dict):
-            raise ValueError("Generated output is not a dictionary.")
+             print("Generated output is not a dictionary.")
 
         # Validate against the template structure:
         def validate_structure(template, generated):
             for key, value in template.items():
                 if key not in generated:
-                    raise ValueError(f"Key '{key}' missing in generated output.")
+                     print(f"Key '{key}' missing in generated output.")
                 if isinstance(value, dict):
                     if not isinstance(generated[key], dict):
-                        raise ValueError(f"Key '{key}' should be a dictionary.")
+                         print(f"Key '{key}' should be a dictionary.")
                     validate_structure(value, generated[key])
                 elif isinstance(value, list):
                     if not isinstance(generated[key], list):
-                        raise ValueError(f"Key '{key}' should be a list.")
+                         print(f"Key '{key}' should be a list.")
                     #If the template shows an example list item, recursively check
                     if value and isinstance(value[0], dict):
                          for item in generated[key]:
@@ -124,7 +112,7 @@ def generate_spec_from_files(requirements_file: str, template_file: str) -> dict
         return filled_spec
 
 
-    except (yaml.YAMLError, ValueError) as e:
+    except (yaml.YAMLError, print) as e:
         print(f"Error parsing or validating LLM output: {e}")
         print("---- Raw LLM Output ----")
         print(response.text)
@@ -141,32 +129,33 @@ def main():
     # Create dummy files for the example
     with open(requirements_file, "w") as f:
         f.write("""
-The project is to design a simple counter.
-The counter should be 8 bits wide.
-It should have an enable signal.
-It should have a synchronous reset.
-It should count up.
+        create a 8-bit calculator which can add and subtract two 8-bit numbers.it should use two 8-bit inputs and one 8-bit output.        
         """)
     with open(template_file, "w") as f:
         f.write("""
-module_name: ""  # Placeholder for the module name
-description: ""  # Placeholder for a brief description
-inputs:
-  - name: ""    # Placeholder for input signal name
-    width: ""   # Placeholder for input signal width
-    description: "" # Placeholder for input signal description
-  - name: ""
-    width: ""
-    description: ""
-outputs:
-  - name: ""    # Placeholder for output signal name
-    width: ""   # Placeholder for output signal width
-    description: "" # Placeholder for output signal description
-parameters:
-  - name: ""    # Placeholder for parameter name
-    value: ""   # Placeholder for parameter value
-    description: "" # Placeholder for parameter description
-        """)
+rtl_project:
+  project_description: ""  # Placeholder for project description
+  top_module: <top_module_name>  # Placeholder for top module name among module name key.
+  module_list:
+       <module_name_key>: <hdl_file_name>.<hdl_file_extension>#optional placeholders can be add as many based on number of modules. 
+  module_functions:
+    - module_name: <module_name_key>
+      module_description: ""  # Placeholder for module description
+      inputs:
+        - net_name: ""  # Placeholder for input signal name
+          width: ""  # Placeholder for input signal width
+          depth: "" # Placeholder for input signal depth
+          description: ""  # Placeholder for input signal description
+      outputs:
+        - name: ""  # Placeholder for output signal name
+          width: ""  # Placeholder for output signal width
+          depth: "" # Placeholder for output signal depth
+          description: ""  # Placeholder for output signal description
+      parameters:
+        - name: ""  # Placeholder for parameter name
+          value: ""  # Placeholder for parameter value
+          description: ""  # Placeholder for parameter description
+""")
 
     # --- Call the function and print the result ---
     filled_specification = generate_spec_from_files(requirements_file, template_file)
