@@ -59,6 +59,7 @@ def generate_spec_from_files(requirements_file: str, template_file: str) -> dict
 
     Instructions:
     - Carefully analyze the project requirements.
+    - the output should be in order such that project description should be first and then top module name and then module list and so on.
     - Do not include any markdown formatting, especially backticks (`) or triple backticks (```).  Output pure YAML only.
     - Maintain the YAML structure exactly as provided in the template. Do *not* remove any fields.
     - Fill in the fields in the template in the order provided in the template file.

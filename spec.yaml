@@ -1,32 +1,35 @@
 rtl_project:
-    module_functions:
-    -   inputs:
-        -   description: First 8-bit input operand.
-            net_name: operand_a
-            width: 8
-        -   description: Second 8-bit input operand.
-            net_name: operand_b
-            width: 8
-        -   description: 'Operation select: 0 for addition, 1 for subtraction'
-            net_name: op_select
-            width: 1
-        module_description: An 8-bit calculator capable of performing addition and
-            subtraction.
-        module_name: calculator_8bit
-        outputs:
-        -   description: 8-bit result of the addition or subtraction.
-            name: result
-            width: 8
-        -   description: Carry-out bit (for addition or subtraction).
-            name: carry_out
-            width: 1
-        -   description: Overflow bit (for signed arithmetic).
-            name: overflow
-            width: 1
-        parameters: []
+    project_description: This project implements an 8-bit calculator capable of performing
+        addition and subtraction operations on two 8-bit input numbers.
+    top_module: calculator_8bit
     module_list:
         calculator_8bit: calculator_8bit.v
-    project_description: This project implements an 8-bit calculator that can perform
-        addition and subtraction operations on two 8-bit input operands. The operation
-        is selected using a 1-bit input.
-    top_module: calculator_8bit
+    module_functions:
+    -   inputs:
+        -   depth: ''
+            description: The first 8-bit input number for the calculation.
+            net_name: input_a
+            width: 8
+        -   depth: ''
+            description: The second 8-bit input number for the calculation.
+            net_name: input_b
+            width: 8
+        -   depth: ''
+            description: 'Control signal to select the operation: 1 for subtraction,
+                0 for addition.'
+            net_name: op_select
+            width: 1
+        module_description: This module implements an 8-bit calculator that performs
+            addition or subtraction based on the op_select input.
+        module_name: calculator_8bit
+        outputs:
+        -   depth: ''
+            description: The 8-bit result of the addition or subtraction operation.
+            name: result
+            width: 8
+        -   depth: ''
+            description: Carry-out bit, indicating an overflow during addition or
+                a borrow during subtraction.
+            name: carry_out
+            width: 1
+        parameters: []
