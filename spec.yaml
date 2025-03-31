@@ -1,26 +1,27 @@
 rtl_project:
     project_description: This project implements an 8-bit calculator capable of performing
-        addition and subtraction operations on two 8-bit input numbers.
+        addition and subtraction operations on two 8-bit input numbers, producing
+        an 8-bit output.
     top_module: calculator_8bit
     module_list:
         calculator_8bit: calculator_8bit.v
     module_functions:
     -   inputs:
         -   depth: ''
-            description: The first 8-bit input number for the calculation.
-            net_name: input_a
+            description: The first 8-bit input operand for the calculation.
+            net_name: operand_a
             width: 8
         -   depth: ''
-            description: The second 8-bit input number for the calculation.
-            net_name: input_b
+            description: The second 8-bit input operand for the calculation.
+            net_name: operand_b
             width: 8
         -   depth: ''
-            description: 'Control signal to select the operation: 1 for subtraction,
-                0 for addition.'
+            description: 'Control signal to select operation: 0 for addition, 1 for
+                subtraction.'
             net_name: op_select
             width: 1
         module_description: This module implements an 8-bit calculator that performs
-            addition or subtraction based on the op_select input.
+            addition or subtraction based on the 'op_select' input.
         module_name: calculator_8bit
         outputs:
         -   depth: ''
@@ -28,8 +29,11 @@ rtl_project:
             name: result
             width: 8
         -   depth: ''
-            description: Carry-out bit, indicating an overflow during addition or
-                a borrow during subtraction.
+            description: Carry-out bit indicating overflow during addition or underflow
+                during subtraction.
             name: carry_out
             width: 1
-        parameters: []
+        parameters:
+        -   description: None
+            name: None
+            value: None
